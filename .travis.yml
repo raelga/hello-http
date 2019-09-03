@@ -1,0 +1,42 @@
+dist: xenial
+
+language: go
+
+services:
+  - docker
+
+env:
+  - GO111MODULE=on
+
+go:
+  - 1.12.x
+  - 1.11.x
+
+git:
+  depth: 1
+
+install: true
+
+notifications:
+  email: false
+
+before_install:
+  - go get github.com/mattn/goveralls
+  - go get golang.org/x/tools/cmd/cover
+
+before_script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.17.1
+
+script:
+  - go vet
+  - $(go env GOPATH)/bin/golangci-lint run
+  - go test -v -race -cover ./...
+  - $HOME/gopath/bin/goveralls -repotoken ${COVERALLS_TOKEN}
+  - docker build -t raelga/hello-http:$TRAVIS_COMMIT .
+
+deploy:
+  provider: script
+  script: docker push raelga/hello-http:$TRAVIS_COMMIT
+  on:
+    branch: master
