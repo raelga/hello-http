@@ -7,4 +7,5 @@ RUN go build -a -o app .
 
 FROM scratch
 COPY --from=build /build/app /
+EXPOSE 8080
 CMD [ "./app" ]
