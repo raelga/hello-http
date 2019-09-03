@@ -3,6 +3,7 @@ LABEL maintainer="Rael Garcia <rael@rael.io>"
 WORKDIR /build
 COPY . .
 ENV GOOS linux
+ENV CGO_ENABLED 0
 RUN go build -a -o app .
 
 FROM scratch
