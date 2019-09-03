@@ -33,10 +33,11 @@ script:
   - $(go env GOPATH)/bin/golangci-lint run
   - go test -v -race -cover ./...
   - $HOME/gopath/bin/goveralls -repotoken ${COVERALLS_TOKEN}
-  - docker build -t raelga/hello-http:$TRAVIS_COMMIT .
+  - docker build -t raelga/hello-http:$TRAVIS_COMMIT -t raelga/hello-http:latest .
+  - docker push raelga/hello-http:$TRAVIS_COMMIT
 
 deploy:
   provider: script
-  script: docker push raelga/hello-http:$TRAVIS_COMMIT
+  script: docker push raelga/hello-http:latest
   on:
     branch: master
